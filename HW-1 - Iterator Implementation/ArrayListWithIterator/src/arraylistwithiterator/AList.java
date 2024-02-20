@@ -53,7 +53,7 @@ public class AList<T> implements ListInterface<T>
 */
 	} // end add
    
-   public void add(int givenPosition, T newEntry)
+   public boolean add(int givenPosition, T newEntry)
    {
       checkIntegrity();
       if ((givenPosition >= 1) && (givenPosition <= numberOfEntries + 1))
@@ -66,6 +66,8 @@ public class AList<T> implements ListInterface<T>
       }
       else
          throw new IndexOutOfBoundsException("Given position of add's new entry is out of bounds.");
+      
+      return true;
    } // end add
    
    public T remove(int givenPosition)

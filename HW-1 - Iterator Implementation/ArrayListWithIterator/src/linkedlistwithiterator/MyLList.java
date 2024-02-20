@@ -1,22 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package arraylistwithiterator;
+package linkedlistwithiterator;
 
 import java.util.*;
-// import queuetest.LinkedQueue;
 
 /**
  *
- * @author kmehta
+ * @author sarvesh
  */
-public class MyLList<E extends Comparable<? super E>> implements ListInterface<E> {
+public class MyLList<E> implements ListInterface<E> {
 
-    private boolean integrityOK;
-    private ListNode firstNode; // reference to first node of the list
-    private ListNode lastNode; // reference to last node of the list
+    private ListNode headNode; // reference to first node of the list
     private int numberOfEntries; // number of entries in list
 
     // constructor
@@ -27,25 +19,13 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
     // clear list. Set firstNode to NULL
     public final void clear() {
 
-        integrityOK = false;
-
-        firstNode = null;
-        lastNode = null;
+        headNode = null;
         numberOfEntries = 0;
-
-        integrityOK = true;
     } // end clear
-
-    private void checkIntegrity() {
-
-        if (!integrityOK)
-            throw new SecurityException("Corrupt Linked List.. cannot continue..");
-
-    }// end checkIntegorty
 
     public boolean isEmpty() {
 
-        return (firstNode == null);
+        return (headNode == null);
 
     } // end isEmpty
 
@@ -55,8 +35,7 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
 
     public boolean contains(E anEntry) {
 
-        checkIntegrity();
-        ListNode fn = firstNode;
+        ListNode fn = headNode;
 
         if (fn == null)
             return false;
@@ -72,42 +51,9 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
         return false;
     }
 
-    /*
-     * public void printAll() {
-     * 
-     * E[] arr = this.toArray();
-     * for(int i = 0; i < arr.length; i++) {
-     * System.out.println(arr[i]);
-     * }
-     * }
-     * 
-     * public String toArray() {
-     * 
-     * boolean done = false;
-     * if(firstNode == null) return null;
-     * 
-     * String outputStr = "[";
-     * 
-     * int count = 0;
-     * ListNode currentNode = firstNode;
-     * 
-     * do {
-     * outputStr += currentNode.getData().toString();
-     * count++;
-     * if(currentNode.next == null)
-     * done = true;
-     * else currentNode = currentNode.next;
-     * } while (!done);
-     * 
-     * return outputStr += "]";
-     * 
-     * }// end toArray
-     * 
-     */
-
     public void printAll() {
 
-        Comparable[] arr = this.toArray();
+        E[] arr = this.toArray();
         for (int i = 0; i < arr.length; i++) {
             System.out.println(arr[i]);
         }
@@ -115,46 +61,47 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
 
     public E[] toArray() {
 
-        if (firstNode == null)
+        if (headNode == null)
             return null;
 
         E[] arr = (E[]) new Comparable[numberOfEntries];
 
         int count = 0;
-        ListNode currentNode = firstNode;
+        ListNode currentNode = headNode;
 
-        do {
+        // Traverse from head
+        while (currentNode != null) {
             arr[count] = currentNode.getData();
             count++;
-            if (currentNode.next == null) {
-                break;
-            }
             currentNode = currentNode.next;
-        } while (!(currentNode.equals(lastNode)));
-
-        arr[count] = lastNode.getData();
+        }
         return arr;
 
-    }// end toArray
+    }
 
+    /*
+     * 1 based index 
+     */
     private ListNode getNodeAt(int givenPosition) {
 
-        checkIntegrity();
         // use temporary node currentNode to traverse
         // list starting at firstNode
-        ListNode currentNode = firstNode;
+        ListNode currentNode = headNode;
         // traverse the list to locate the desired node
         for (int counter = 1; counter < givenPosition; counter++) {
             currentNode = currentNode.next;
         }
 
-        // currentList now refers to node at givenPosition
+        // currentNode now refers to node at givenPosition
         return currentNode;
-    } // end getNodeAt
+    }
 
+    /*
+     * 0 based index
+     */
     public E getEntry(int i) {
 
-        Comparable[] arr = this.toArray();
+        E[] arr = this.toArray();
 
         E element = null;
         if ((i > 0) && (i < arr.length)) {
@@ -163,12 +110,9 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
 
         return element;
 
-    } // end getEntry
+    }
 
     public E replace(int position, E anEntry) {
-
-        checkIntegrity();
-        boolean success = false;
 
         if (!((position >= 1) && (position <= numberOfEntries))) {
             return null;
@@ -176,30 +120,27 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
 
             ListNode theNode = this.getNodeAt(position - 1);
             theNode.setData(anEntry);
-            success = true;
         }
 
         return anEntry;
 
-    } // end replace
+    }
 
     public E remove(int position) {
-
-        checkIntegrity();
 
         E result = null; // return value
 
         if ((position >= 1) && (position <= numberOfEntries)) {
             if (position == 1) { // case 1: first node, remove first entry
-                result = firstNode.data; // save entry to be removed
-                firstNode = firstNode.next;
+                result = headNode.data; // save entry to be removed
+                headNode = headNode.next;
             } else { // case 2: not first node
                 ListNode nodeBefore = getNodeAt(position - 1);
                 ListNode nodeToRemove = nodeBefore.next;
                 ListNode nodeAfter = nodeToRemove.next;
                 nodeBefore.next = nodeAfter; // disconnect the node to be removed
                 result = nodeToRemove.getData(); // save entry to be removed
-            } // end if
+            }
 
             numberOfEntries--;
 
@@ -207,55 +148,27 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
 
             System.out.println(position + ": is out of range of the list with size: " + numberOfEntries);
 
-        } // end if
+        }
 
-        return result; // return removed entry, or
-
-    } // end remove(int i)
-
-    public ListInterface<E> getAllLessThan(Comparable<E> elementToCompare) {
-
-        ListInterface<E> resultList = new MyLList<>();
-        ListNode currentNode = firstNode;
-        boolean done = false;
-
-        do {
-            E currentElement = currentNode.getData();
-            if (elementToCompare.compareTo(currentElement) > 0)
-                resultList.add(currentElement);
-            if (currentNode.getNextNode() == null)
-                done = true;
-            currentNode = currentNode.getNextNode();
-        } while (!done);
-
-        return resultList;
-
-    } // end getAllLessThan
+        return result;
+    }
 
     /**
-     * add an existing entry of this list.
-     * The list size is increased by 1.
-     * 
+     * append an existing entry to the tail
      * @param anEntry The object to be added as a new entry.
      */
     public void add(E anEntry) {
-
-        checkIntegrity();
 
         // get new node to hold newEntry
         ListNode newNode = new ListNode(anEntry);
 
         // adding to empty list
         if (isEmpty()) {
-            firstNode = newNode;
-        }
-
-        // add to non-empty list
-        else {
+            headNode = newNode;
+        } else {
             ListNode lastNode = getNodeAt(numberOfEntries);
             lastNode.next = newNode; // make last node reference new node
-        } // end if
-        lastNode = newNode;
+        }
         numberOfEntries++;
     }
 
@@ -263,16 +176,13 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
 
         ListNode nodeBefore, nodeAfter;
 
-        checkIntegrity();
-
         boolean isSuccessful = true;
         if ((insertPosition >= 1) && (insertPosition <= numberOfEntries + 1)) {
             // get new node to hold newEntry
             ListNode newNode = new ListNode(anEntry);
             if (isEmpty() || (insertPosition == 1)) { // empty or 1st position
-                newNode.next = firstNode;
-                firstNode = newNode;
-                lastNode = newNode;
+                newNode.next = headNode;
+                headNode = newNode;
             } else {// not empty and newPosition > 1
                 nodeBefore = getNodeAt(insertPosition - 1);
 
@@ -280,13 +190,11 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
                 if (nodeBefore.next == null) {
                     nodeBefore.next = newNode;
                     newNode.next = null;
-                    lastNode = newNode;
                     // if insert point was somewhere in the middle of the list//
                 } else {
                     nodeAfter = nodeBefore.next;
                     newNode.next = nodeAfter;
                     nodeBefore.next = newNode;
-                    lastNode = nodeAfter;
                 }
             } // end if
 
@@ -300,7 +208,7 @@ public class MyLList<E extends Comparable<? super E>> implements ListInterface<E
     public void printLinkedList() {
 
         int nodeCount = 1;
-        ListNode currentNode = firstNode;
+        ListNode currentNode = headNode;
         E data = (E) currentNode.getData();
 
         System.out.println("Node[1]: " + data);
