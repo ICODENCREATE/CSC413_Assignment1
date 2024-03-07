@@ -104,7 +104,7 @@ public class MyLList<E> implements ListInterface<E> {
         E[] arr = this.toArray();
 
         E element = null;
-        if ((i > 0) && (i < arr.length)) {
+        if ((i > 0) && (i <= arr.length)) {
             element = (E) arr[i - 1];
         }
 
