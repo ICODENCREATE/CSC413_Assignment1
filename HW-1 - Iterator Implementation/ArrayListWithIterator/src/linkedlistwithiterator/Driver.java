@@ -12,8 +12,8 @@ public class Driver  {
 
         ListWithIteratorInterface<String> myList = new LinkedListWithIterator<>();
 
-        System.out.println("Testing add to end: Add AJ, B, C, D");
-        myList.add("AJ");
+        System.out.println("Testing add to end: Add A, B, C, D");
+        myList.add("A");
         myList.add("B");
         myList.add("C");
         myList.add("D");
@@ -34,7 +34,7 @@ public class Driver  {
 
         System.out.println("\nBegin iteration again:");
         it = myList.getIterator();
-        System.out.println("next() returns " + it.next() + " (should be AJ)");
+        System.out.println("next() returns " + it.next() + " (should be A)");
 
         System.out.println("remove() should remove A");
         it.remove();
@@ -67,7 +67,7 @@ public class Driver  {
         Iterator it = aList.getIterator();
 
         while(it.hasNext()) {
-            System.out.println(it.next());
+            System.out.println("==> " + it.next());
         }
 
     }  // end displayList
